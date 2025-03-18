@@ -48,7 +48,7 @@ class ProducerConsole:
         keywords = input('Enter the keywords: ')
         news = self.news_manager.get_news(keywords)
 
-        print(f'Found {len(news['articles'])} news')
+        print(f"Found {len(news['articles'])} articles")
 
         for article in news['articles']:
             article_transformed : Article = Article.from_dict(article, keywords)
