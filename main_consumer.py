@@ -13,17 +13,10 @@ if __name__ == '__main__':
 
     file_name = input('Enter file name to save your news: ')
     topic = input('Enter topic name: ')
-    writer = HDFSWriter(os.getenv('GCP_HOST'))
-
-    print(os.getenv('HDFS_FILE_DIRECTORY'))
-
-    if not writer.client.status(os.getenv('HDFS_FILE_DIRECTORY')):
-        print(f"Directory {os.getenv('HDFS_FILE_DIRECTORY')} does not exist. Creating it now...")
 
     consumer = MKafkaConsumer(os.getenv('GCP_HOST'), os.getenv('GCP_KAFKA_PORT'), topic = topic, json_deserializer=True, json_decoder=ArticleDecoder)
+    writer = HDFSWriter(os.getenv('GCP_HOST'), root=os.getenv('HDFS_FILE_DIRECTORY'))
 
-
-
-    console = ConsumerConsole(consumer, writer, f"{os.getenv('HDFS_FILE_DIRECTORY')}/{file_name}.csv")
+    console = ConsumerConsole(consumer, writer, f"{file_name}.csv")
 
     console.run()

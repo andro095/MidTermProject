@@ -23,6 +23,6 @@ class ConsumerConsole:
             if write_header:
                 write_header = False
 
-            self.writer.save(self.file_name, csv_data, append=True)
+            self.writer.save(self.file_name, csv_data)
 
             print(csv_data)
