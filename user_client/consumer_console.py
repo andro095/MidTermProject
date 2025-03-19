@@ -20,9 +20,10 @@ class ConsumerConsole:
 
             csv_data = article_transformed.to_csv(header=write_header)
 
+            self.writer.save(self.file_name, csv_data, append=not write_header)
+
             if write_header:
                 write_header = False
 
-            self.writer.save(self.file_name, csv_data)
 
             print(csv_data)
