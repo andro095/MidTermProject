@@ -17,6 +17,6 @@ if __name__ == '__main__':
     consumer = MKafkaConsumer(os.getenv('GCP_HOST'), os.getenv('GCP_KAFKA_PORT'), topic = topic, json_deserializer=True, json_decoder=ArticleDecoder)
     writer = HDFSWriter(os.getenv('GCP_HOST'), user='duty095')
 
-    console = ConsumerConsole(consumer, writer, f"{os.getenv('HDFS_FILE_DIRERCTORY')}/{file_name}.csv")
+    console = ConsumerConsole(consumer, writer, f"{os.getenv('HDFS_FILE_DIRECTORY')}/{file_name}.csv")
 
     console.run()
