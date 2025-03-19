@@ -11,12 +11,12 @@ port = '9092'
 if __name__ == '__main__':
     load_dotenv()
 
-    file_name = input('Enter file name to save your news without the extension: ')
+    file_name = input('Enter file name to save your news: ')
     topic = input('Enter topic name: ')
 
     consumer = MKafkaConsumer(os.getenv('GCP_HOST'), os.getenv('GCP_KAFKA_PORT'), topic = topic, json_deserializer=True, json_decoder=ArticleDecoder)
-    writer = HDFSWriter(os.getenv('GCP_HOST'))
+    writer = HDFSWriter(os.getenv('GCP_HOST'), user='duty095')
 
-    console = ConsumerConsole(consumer, writer, file_name)
+    console = ConsumerConsole(consumer, writer, f"{os.getenv('HDFS_FILE_DIRERCTORY')}/{file_name}.csv")
 
     console.run()
