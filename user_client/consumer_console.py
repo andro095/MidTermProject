@@ -22,7 +22,7 @@ class ConsumerConsole:
 
                 csv_data = article_transformed.to_csv(header=write_header)
 
-                writer.write(self.file_name, csv_data)
+                writer.write(csv_data)
 
                 if write_header:
                     write_header = False
