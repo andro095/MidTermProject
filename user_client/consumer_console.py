@@ -15,8 +15,9 @@ class ConsumerConsole:
         write_header = True
 
         for article in self.consumer.process():
+            most_common_word = Counter(article.content.split()).most_common(1)[0]
 
-            article_transformed = ArticleTransformed.from_article(article, Counter(article.content.split()).most_common(1)[0][0])
+            article_transformed = ArticleTransformed.from_article(article, most_common_word=most_common_word[0], most_common_count=most_common_word[1])
 
             csv_data = article_transformed.to_csv(header=write_header)
 
