@@ -46,11 +46,14 @@ class ProducerConsole:
 
     def fetch_news(self):
         keywords = input('Enter the keywords: ')
-        news = self.news_manager.get_news(keywords)
+        news = []
 
-        print(f"Found {len(news['articles'])} articles")
+        for i in range(1, 6):
+            news.extend(self.news_manager.get_news(keywords, page=i)['articles'])
 
-        for article in news['articles']:
+        print(f"Found {len(news)} articles")
+
+        for article in news:
             article_transformed : Article = Article.from_dict(article, keywords)
             self.producer.produce(article_transformed)
 

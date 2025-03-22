@@ -1,5 +1,6 @@
 import json
 from collections.abc import Callable
+from typing import Generator
 
 from kafka import KafkaConsumer
 
@@ -21,7 +22,7 @@ class MKafkaConsumer(KafkaConsumer):
         )
         self.topic = topic
 
-    def process(self, **kwargs):
+    def process[T](self) -> Generator[T]:
         for message in self:
             yield message.value
 

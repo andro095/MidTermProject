@@ -1,9 +1,14 @@
 import json
+import re
+
+
+def clean_text(text):
+    return re.sub(r"[^a-zA-Z0-9\s]", '', ' '.join(text.lower().split()))
 
 
 class Article:
     def __init__(self, keywords : str, title : str, source : str, author : str, description : str, date_published : str, content : str):
-        self.keywords = keywords
+        self.keywords = clean_text(keywords)
         self.title = title
         self.source = source
         self.author = author
@@ -16,14 +21,19 @@ class Article:
 
     @staticmethod
     def from_dict(article, keywords):
+        clean_keywords = clean_text(keywords)
+        cleaned_title = clean_text(article['title']) if article['title'] else ''
+        cleaned_description = clean_text(article['description']) if article['description'] else ''
+        cleaned_content = clean_text(article['content']) if article['content'] else ''
+
         return Article(
-            keywords=keywords,
-            title=article['title'],
+            keywords=clean_keywords,
+            title=cleaned_title,
             source=article['source']['name'],
             author=article['author'],
-            description=article['description'],
+            description=cleaned_description,
             date_published=article['publishedAt'],
-            content=article['content']
+            content=cleaned_content
         )
 
     def to_dict(self):

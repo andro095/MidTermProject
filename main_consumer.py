@@ -17,4 +17,6 @@ if __name__ == '__main__':
 
     console = ConsumerConsole(consumer, writer, f"{file_name}.csv")
 
+    print("Consumer is running. Waiting for news...")
+
     console.run()

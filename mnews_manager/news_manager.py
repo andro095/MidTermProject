@@ -20,9 +20,10 @@ class NewsManager:
     def change_date_to(self, date_to):
         self.date_to = date_to
 
-    def get_news(self, keywords):
+    def get_news(self, keywords, page = 1):
         return self.client.get_everything(q=keywords,
                                           sources=self.sources,
                                           language=self.language,
                                           from_param=self.date_from,
-                                          to=self.date_to)
+                                          to=self.date_to,
+                                          page=page)

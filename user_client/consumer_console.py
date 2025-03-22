@@ -1,8 +1,8 @@
-from collections import Counter
-
-from articles import ArticleTransformed
+from articles import ArticleTransformed, Article
 from hdfs_manager import HDFSWriter
 from mkafka import MKafkaConsumer
+
+from typing import Generator
 
 
 class ConsumerConsole:
@@ -14,10 +14,12 @@ class ConsumerConsole:
     def run(self):
         write_header = True
 
-        for article in self.consumer.process():
-            most_common_word = Counter(article.content.split()).most_common(1)[0]
+        messages : Generator[Article] = self.consumer.process()
 
-            article_transformed = ArticleTransformed.from_article(article, most_common_word=most_common_word[0], most_common_count=most_common_word[1])
+        for article in messages:
+            article_transformed = ArticleTransformed.from_article(article)
+
+            print(article_transformed)
 
             csv_data = article_transformed.to_csv(header=write_header)
 
