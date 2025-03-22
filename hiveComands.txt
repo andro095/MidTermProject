@@ -1,3 +1,6 @@
+--- Sources used for the news
+bbc-news,cnn,fox-news,nbc-news,the-guardian-uk,the-new-york-times,the-washington-post,usa-today,independent,daily-mail
+
 ---- Creating the database to store the news
 
 CREATE DATABASE results_db;

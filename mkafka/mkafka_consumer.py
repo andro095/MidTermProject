@@ -22,7 +22,7 @@ class MKafkaConsumer(KafkaConsumer):
         )
         self.topic = topic
 
-    def process[T](self) -> Generator[T]:
+    def process(self) -> Generator:
         for message in self:
             yield message.value
 
