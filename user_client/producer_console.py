@@ -52,9 +52,12 @@ class ProducerConsole:
             news.extend(self.news_manager.get_news(keywords, page=i)['articles'])
 
         print(f"Found {len(news)} articles")
+        print(f"Sample articles: {news[:3 if len(news) > 3 else len(news)]}")
 
         for article in news:
             article_transformed : Article = Article.from_dict(article, keywords)
+
+            print(f"Sending article: {article_transformed.title} - {article_transformed.source} - {article_transformed.date_published}")
             self.producer.produce(article_transformed)
 
         print('News sent to be processed')

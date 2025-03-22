@@ -18,11 +18,11 @@ class ConsumerConsole:
 
         for article in messages:
             article_transformed = ArticleTransformed.from_article(article)
-
-            print(article_transformed)
+            print(f"Article received: {article_transformed.title} - {article_transformed.source} - {article_transformed.date_published}")
 
             csv_data = article_transformed.to_csv(header=write_header)
 
+            print(f"Writing to HDFS this data: {csv_data}")
             self.writer.save(self.file_name, csv_data, append=not write_header)
 
             if write_header:
