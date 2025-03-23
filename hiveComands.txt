@@ -3,9 +3,9 @@ bbc-news,cnn,fox-news,nbc-news,the-guardian-uk,the-new-york-times,the-washington
 
 ---- Creating the database to store the news
 
-CREATE DATABASE results_db;
+CREATE DATABASE news_db;
 
-USE results_db;
+USE news_db;
 
 ---- Creating the hive table to store the news
 CREATE EXTERNAL TABLE IF NOT EXISTS news (
@@ -24,7 +24,7 @@ LOCATION '/BigData/MidTermProject/'
 TBLPROPERTIES('skip.header.line.count' = '1' );
 
 ---- Loading the data into the hive table
-LOAD DATA LOCAL INPATH '/BigData/MidTermProject/news/news.csv' INTO TABLE news;
+LOAD DATA INPATH '/BigData/MidTermProject/news/news.csv' INTO TABLE news;
 
 ---- Check if the data was loaded correctly
 SELECT * FROM news LIMIT 10;
@@ -45,12 +45,13 @@ GROUP BY most_common_word
 ORDER BY occurrences DESC
 LIMIT 5;
 
---- Top 5 used words per source
+--- Top 15 used words per source
 SELECT source, most_common_word, SUM(most_common_count) AS occurrences
 FROM news
 WHERE most_common_word IS NOT NULL
+AND most_common_count IS NOT NULL
 GROUP BY source, most_common_word
 ORDER BY source, occurrences DESC
-LIMIT 5;
+LIMIT 15;
 
 
