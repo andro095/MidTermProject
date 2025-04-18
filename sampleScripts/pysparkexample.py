@@ -2,12 +2,12 @@ from pyspark.sql import SparkSession
 from pyspark.sql.types import StructType, StructField, StringType, LongType, DoubleType
 from pyspark.sql.functions import from_json, col
 
-topic = input('Enter topic name: ')
-
 # Initialize Spark Session for Dataproc
 spark = SparkSession.builder \
     .appName("KafkaStreamingExample") \
     .getOrCreate()
+
+topic = input('Enter topic name: ')
 
 # Define schema based on your provided JSON sample
 json_schema = StructType([
