@@ -7,8 +7,6 @@ spark = SparkSession.builder \
     .appName("KafkaStreamingExample") \
     .getOrCreate()
 
-topic = input('Enter topic name: ')
-
 # Define schema based on your provided JSON sample
 json_schema = StructType([
     StructField("keywords", StringType(), True),
@@ -24,7 +22,7 @@ json_schema = StructType([
 kafka_df = spark.readStream \
     .format("kafka") \
     .option("kafka.bootstrap.servers", "localhost:9092") \
-    .option("subscribe", topic) \
+    .option("subscribe", "test-s-2") \
     .option("checkpointLocation", "file:////home/duty095/chkpt") \
     .option("startingOffsets", "earliest") \
     .load()

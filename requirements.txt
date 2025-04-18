@@ -3,3 +3,4 @@ pandas~=2.2.3
 hdfs~=2.7.3
 newsapi~=0.1.1
 python-dotenv~=1.0.1
+pyspark~=3.5.5
