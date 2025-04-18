@@ -1,34 +1,40 @@
 from pyspark.sql import SparkSession
 from pyspark.sql.types import StructType, StructField, StringType, LongType, DoubleType
+from pyspark.sql.functions import from_json, col
 
 # Initialize Spark Session for Dataproc
 spark = SparkSession.builder \
-    .appName("StreamingExample") \
+    .appName("KafkaStreamingExample") \
     .getOrCreate()
 
 # Define schema based on your provided JSON sample
 json_schema = StructType([
-    StructField("Arrival_Time", LongType(), True),
-    StructField("Creation_Time", LongType(), True),
-    StructField("Device", StringType(), True),
-    StructField("Index", LongType(), True),
-    StructField("Model", StringType(), True),
-    StructField("User", StringType(), True),
-    StructField("gt", StringType(), True),
-    StructField("x", DoubleType(), True),
-    StructField("y", DoubleType(), True),
-    StructField("z", DoubleType(), True)
+    StructField("keywords", StringType(), True),
+    StructField("title", StringType(), True),
+    StructField("source", StringType(), True),
+    StructField("author", StringType(), True),
+    StructField("description", StringType(), True),
+    StructField("date_published", StringType(), True),
+    StructField("content", StringType(), True),
 ])
 
-# Create a streaming DataFrame from JSON source
-stream_df = spark.readStream \
-    .format("json") \
-    .option("path", "hdfs:///BigData/logs") \
-    .schema(json_schema) \
+# Create a streaming DataFrame from Kafka source
+kafka_df = spark.readStream \
+    .format("kafka") \
+    .option("kafka.bootstrap.servers", "localhost:9092") \
+    .option("subscribe", "my-news") \
+    .option("startingOffsets", "earliest") \
     .load()
 
-# Simply display the raw data without processing
-query = stream_df.writeStream \
+# The Kafka source provides messages as binary data in the "value" column
+# We need to cast it to string and parse the JSON
+parsed_df = kafka_df \
+    .selectExpr("CAST(value AS STRING) as json_data") \
+    .select(from_json("json_data", json_schema).alias("data")) \
+    .select("data.*")
+
+# Display the parsed data
+query = parsed_df.writeStream \
     .outputMode("append") \
     .format("console") \
     .option("truncate", "false") \
