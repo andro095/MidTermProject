@@ -1,6 +1,6 @@
 from pyspark.sql import SparkSession
 from pyspark.sql.types import StructType, StructField, StringType, LongType, DoubleType
-from pyspark.sql.functions import from_json, col
+from pyspark.sql.functions import from_json, col, count
 
 # Initialize Spark Session for Dataproc
 spark = SparkSession.builder \
@@ -22,7 +22,7 @@ json_schema = StructType([
 kafka_df = spark.readStream \
     .format("kafka") \
     .option("kafka.bootstrap.servers", "localhost:9092") \
-    .option("subscribe", "test-s-3") \
+    .option("subscribe", "test-s-4") \
     .option("checkpointLocation", "file:////home/duty095/chkpt") \
     .option("startingOffsets", "earliest") \
     .load()
@@ -30,12 +30,27 @@ kafka_df = spark.readStream \
 # The Kafka source provides messages as binary data in the "value" column
 # We need to cast it to string and parse the JSON
 parsed_df = kafka_df \
-    .selectExpr("CAST(value AS STRING) as json_data") \
-    .select(from_json("json_data", json_schema).alias("data")) \
-    .select(col("data.title").alias("titulo"),  col("data.author").alias("autor"))
+    .selectExpr("CAST(value AS STRING) as json_data", "timestamp") \
+    .select(from_json("json_data", json_schema).alias("data"), "timestamp") \
+    .select(
+        col("data.title").alias("title"),
+        col("data.author").alias("author"),
+        col("data.source").alias("source"),
+        col("timestamp").alias("event_time")
+    ) \
+    .withWatermark("event_time", "10 minutes")  # Set appropriate watermark duration
 
-# Display the parsed data
-query = parsed_df.writeStream \
+# Perform aggregation - counting news by source
+aggregated_df = parsed_df \
+    .groupBy("source") \
+    .agg(count("*").alias("count_of_news"))
+
+# Note: In streaming mode, we cannot use ORDER BY or LIMIT directly
+# as these operations require a complete view of the data
+
+# Write the results to the console in append mode
+query = aggregated_df \
+    .writeStream \
     .outputMode("append") \
     .format("console") \
     .option("checkpointLocation", "file:////home/duty095/chkpt") \
