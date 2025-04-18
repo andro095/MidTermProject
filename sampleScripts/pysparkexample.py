@@ -1,6 +1,8 @@
-from pyspark.sql import SparkSession, Column
+from pyspark.sql import SparkSession
 from pyspark.sql.types import StructType, StructField, StringType, LongType, DoubleType
 from pyspark.sql.functions import from_json, col
+
+topic = input('Enter topic name: ')
 
 # Initialize Spark Session for Dataproc
 spark = SparkSession.builder \
@@ -22,7 +24,7 @@ json_schema = StructType([
 kafka_df = spark.readStream \
     .format("kafka") \
     .option("kafka.bootstrap.servers", "localhost:9092") \
-    .option("subscribe", "test-s-2") \
+    .option("subscribe", topic) \
     .option("checkpointLocation", "file:////home/duty095/chkpt") \
     .option("startingOffsets", "earliest") \
     .load()
@@ -32,7 +34,7 @@ kafka_df = spark.readStream \
 parsed_df = kafka_df \
     .selectExpr("CAST(value AS STRING) as json_data") \
     .select(from_json("json_data", json_schema).alias("data")) \
-    .select("data.title",  "data.author")
+    .select(col("data.title").alias("titulo"),  col("data.author").alias("autor"))
 
 # Display the parsed data
 query = parsed_df.writeStream \
