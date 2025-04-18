@@ -38,6 +38,7 @@ parsed_df = kafka_df \
 query = parsed_df.writeStream \
     .outputMode("append") \
     .format("console") \
+    .option("checkpointLocation", "file:////home/duty095/chkpt") \
     .option("truncate", "false") \
     .start()
 
