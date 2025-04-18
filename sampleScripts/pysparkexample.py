@@ -1,4 +1,4 @@
-from pyspark.sql import SparkSession
+from pyspark.sql import SparkSession, Column
 from pyspark.sql.types import StructType, StructField, StringType, LongType, DoubleType
 from pyspark.sql.functions import from_json, col
 
@@ -22,7 +22,7 @@ json_schema = StructType([
 kafka_df = spark.readStream \
     .format("kafka") \
     .option("kafka.bootstrap.servers", "localhost:9092") \
-    .option("subscribe", "test-s-1") \
+    .option("subscribe", "test-s-2") \
     .option("checkpointLocation", "file:////home/duty095/chkpt") \
     .option("startingOffsets", "earliest") \
     .load()
@@ -32,7 +32,7 @@ kafka_df = spark.readStream \
 parsed_df = kafka_df \
     .selectExpr("CAST(value AS STRING) as json_data") \
     .select(from_json("json_data", json_schema).alias("data")) \
-    .select("data.*")
+    .select(Column("data.title").alias("title"),  Column("data.author").alias("author"))
 
 # Display the parsed data
 query = parsed_df.writeStream \
