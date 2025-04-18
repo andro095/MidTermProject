@@ -1,49 +1,38 @@
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import explode
-from pyspark.sql.functions import split
-from pyspark.sql.types import StructType
+from pyspark.sql.types import StructType, StructField, StringType, LongType, DoubleType
 
-spark = SparkSession \
-    .builder \
-    .appName("StructuredNetworkWordCount") \
-    .config("spark.jars.packages", "org.apache.spark:spark-sql-kafka-0-10_2.13:3.5.0") \
+# Initialize Spark Session for Dataproc
+spark = SparkSession.builder \
+    .appName("StreamingExample") \
     .getOrCreate()
 
-articleSchema = StructType().add("keywords", "string") \
-    .add("title", "string") \
-    .add("source", "string") \
-    .add("author", "string") \
-    .add("description", "string") \
-    .add("date_published", "string") \
-    .add("content", "string")
+# Define schema based on your provided JSON sample
+json_schema = StructType([
+    StructField("Arrival_Time", LongType(), True),
+    StructField("Creation_Time", LongType(), True),
+    StructField("Device", StringType(), True),
+    StructField("Index", LongType(), True),
+    StructField("Model", StringType(), True),
+    StructField("User", StringType(), True),
+    StructField("gt", StringType(), True),
+    StructField("x", DoubleType(), True),
+    StructField("y", DoubleType(), True),
+    StructField("z", DoubleType(), True)
+])
 
-df_stream = spark.readStream.format("kafka") \
-    .schema(articleSchema) \
-    .option("kafka.bootstrap.servers", "35.188.143.97:9092") \
-    .option("subscribe", "articles") \
+# Create a streaming DataFrame from JSON source
+stream_df = spark.readStream \
+    .format("json") \
+    .option("path", "hdfs:///BigData/logs") \
+    .schema(json_schema) \
     .load()
 
-selected_df = df_stream.select(df_stream.title, df_stream.author.alias("author_name"))
-
-wrote_df = selected_df.writeStream \
-    .format("kafka") \
-    .option("kafka.bootstrap.servers", "35.188.143.97:9092") \
-    .option("topic", "iot-sink") \
+# Simply display the raw data without processing
+query = stream_df.writeStream \
     .outputMode("append") \
+    .format("console") \
+    .option("truncate", "false") \
     .start()
 
-# from pyspark.sql import SparkSession
-#
-# spark = SparkSession.builder \
-#     .appName("KafkaTest") \
-#     .config("spark.jars.packages", "org.apache.spark:spark-sql-kafka-0-10_2.13:3.5.0") \
-#     .getOrCreate()
-#
-# df = spark \
-#     .readStream \
-#     .format("kafka") \
-#     .option("kafka.bootstrap.servers", "35.188.143.97:9092") \
-#     .option("subscribe", "iot-sink") \
-#     .load()
-#
-# df.printSchema()
+# Wait for the streaming query to terminate
+query.awaitTermination()
