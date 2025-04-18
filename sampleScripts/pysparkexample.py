@@ -1,5 +1,5 @@
 from pyspark.sql import SparkSession
-from pyspark.sql.types import StructType, StructField, StringType, LongType, DoubleType
+from pyspark.sql.types import StructType, StructField, StringType
 from pyspark.sql.functions import from_json, col
 
 # Initialize Spark Session for Dataproc
