@@ -42,7 +42,7 @@ parsed_df = kafka_df \
 # Now perform the aggregation
 aggregated_df = parsed_df \
     .withWatermark("event_time", "1 minute") \
-    .groupBy(window(col("event_time", "1 minute"))) \
+    .groupBy(window(col("event_time"), "1 minute")) \
     .count()
 
 final_df = aggregated_df.withColumn("key", "100") \
