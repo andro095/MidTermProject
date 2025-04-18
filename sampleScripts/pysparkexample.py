@@ -45,8 +45,8 @@ aggregated_df = parsed_df \
     .groupBy(window(col("event_time"), "1 minute")) \
     .count()
 
-final_df = aggregated_df.withColumn("key", "100") \
-    .select(col("key").alias("key"), col("window.start").alias("window_start"), col("window.end").alias("window_end"), col("count"))
+final_df = aggregated_df \
+    .select(col("window.start").alias("window_start"), col("window.end").alias("window_end"), col("count"))
 
 # Use append mode with the watermark
 query = final_df \
