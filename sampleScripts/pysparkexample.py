@@ -1,6 +1,6 @@
 from pyspark.sql import SparkSession
 from pyspark.sql.types import StructType, StructField, StringType, LongType, DoubleType
-from pyspark.sql.functions import from_json, col, count, to_timestamp, window
+from pyspark.sql.functions import from_json, col
 
 # Initialize Spark Session for Dataproc
 spark = SparkSession.builder \
@@ -30,27 +30,12 @@ kafka_df = spark.readStream \
 # The Kafka source provides messages as binary data in the "value" column
 # We need to cast it to string and parse the JSON
 parsed_df = kafka_df \
-    .selectExpr("CAST(value AS STRING) as json_data", "timestamp") \
-    .select(from_json("json_data", json_schema).alias("data"), "timestamp") \
-    .select(
-        col("data.title").alias("title"),
-        col("data.author").alias("author"),
-        col("data.source").alias("source"),
-        col("timestamp").alias("event_time")  # Ensure it's a timestamp type
-    )  # Define watermark BEFORE aggregation
+    .selectExpr("CAST(value AS STRING) as json_data") \
+    .select(from_json("json_data", json_schema).alias("data")) \
+    .select(col("data.title").alias("titulo"),  col("data.author").alias("autor"))
 
-# Now perform the aggregation
-aggregated_df = parsed_df \
-    .withWatermark("event_time", "1 minute") \
-    .groupBy(window(col("event_time"), "1 minute")) \
-    .count()
-
-final_df = aggregated_df \
-    .select(col("window.start").alias("window_start"), col("window.end").alias("window_end"), col("count"))
-
-# Use append mode with the watermark
-query = final_df \
-    .writeStream \
+# Display the parsed data
+query = parsed_df.writeStream \
     .outputMode("append") \
     .format("console") \
     .option("checkpointLocation", "file:////home/duty095/chkpt") \
