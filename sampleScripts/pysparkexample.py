@@ -32,7 +32,7 @@ kafka_df = spark.readStream \
 parsed_df = kafka_df \
     .selectExpr("CAST(value AS STRING) as json_data") \
     .select(from_json("json_data", json_schema).alias("data")) \
-    .select(Column("data.title").alias("title"),  Column("data.author").alias("author"))
+    .select("data.title",  "data.author")
 
 # Display the parsed data
 query = parsed_df.writeStream \
