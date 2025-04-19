@@ -18,7 +18,7 @@ iot = (
     spark.readStream
     .format("json")
     .schema(userSchema)
-    .option("path", "hdfs:///BigData/logs")
+    .option("path", "/BigData/logs")
     .load()
 )
 
