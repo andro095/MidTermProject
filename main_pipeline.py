@@ -14,7 +14,7 @@ if __name__ == '__main__':
 
     db_config = DBConfig(
         format= "jdbc",
-        jdbc_url = f"jdbc:mysql://{os.getenv('GCP_LOCAL_HOST')}:3306/news_db",
+        jdbc_url = f"jdbc:mysql://10.128.0.6:3306/news_db",
         table_name = "news",
         user = "training",
         password = "training",

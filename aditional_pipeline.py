@@ -10,6 +10,7 @@ class MySQLDataLoader:
     def load_csv_from_file_sink(self,hdfs_path):
         try:
             df = self.session.read.json(hdfs_path)
+            df.show()
             return df
         except Exception as e:
             print(f"Error loading CSV from HDFS: {str(e)}")
