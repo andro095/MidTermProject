@@ -24,7 +24,7 @@ iot = (
 
 iot_event_time = iot.withColumn(
     "event_time",
-    (col("Creation_Time").cast("double")).cast("timestamp")
+    (col("Creation_Time").cast("double")/1000000000).cast("timestamp")
 )
 
 iot_group_win = (
