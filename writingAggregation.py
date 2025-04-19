@@ -1,6 +1,6 @@
 from pyspark.sql import SparkSession
 from pyspark.sql.types import StructType, StructField, StringType
-from pyspark.sql.functions import from_json, col
+from pyspark.sql.functions import from_json, col, from_unixtime, window
 from dotenv import load_dotenv
 import os
 
@@ -33,11 +33,19 @@ parsed_stream = raw_stream \
     .select(from_json("json_data", json_schema).alias("data")) \
     .select("data.*")
 
-query = parsed_stream.writeStream \
+parsed_stream = parsed_stream.withColumn("timestamp", from_unixtime("timestamp").cast("timestamp"))
+
+source_counts = parsed_stream.withWatermark("timestamp", "10 seconds") \
+    .groupBy(window("timestamp", "10 seconds"), "source") \
+    .count()
+
+source_counts = source_counts.select("window.start", "window.end", "source", "count")
+
+query = source_counts.writeStream \
     .outputMode("append") \
-    .format("console") \
     .option("checkpointLocation", os.getenv('CHKPT_DIR')) \
-    .trigger(processingTime='3 seconds') \
+    .trigger(processingTime='5 seconds') \
+    .format("console") \
     .start()
 
 query.awaitTermination()
