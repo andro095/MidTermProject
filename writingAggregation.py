@@ -29,8 +29,8 @@ raw_stream = spark.readStream \
     .load()
 
 parsed_stream = raw_stream \
-    .selectExpr("CAST(value AS STRING) as json_data") \
-    .select(from_json("json_data", json_schema).alias("data")) \
+    .selectExpr("CAST(value AS STRING) as json_data", "timestamp") \
+    .select(from_json("json_data", json_schema).alias("data"), "timestamp") \
     .select("data.*")
 
 parsed_stream = parsed_stream.withColumn("timestamp", from_unixtime("timestamp").cast("timestamp"))
