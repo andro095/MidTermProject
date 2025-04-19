@@ -14,8 +14,8 @@ if __name__ == '__main__':
 
     db_config = DBConfig(
         format= "jdbc",
-        jdbc_url = f"jdbc:mysql://{os.getenv('GCP_HOST')}:3306/articles_db",
-        table_name = "articles",
+        jdbc_url = f"jdbc:mysql://{os.getenv('GCP_LOCAL_HOST')}:3306/news_db",
+        table_name = "news",
         user = "training",
         password = "training",
         driver="com.mysql.cj.jdbc.Driver"

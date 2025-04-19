@@ -1,6 +1,5 @@
 from pyspark.sql import SparkSession
 from db_config import DBConfig
-import pandas as pd
 
 class MySQLDataLoader:
     def __init__(self, session: SparkSession, db_config: DBConfig, hdfs_path: str):
