@@ -33,6 +33,6 @@ parsed_stream = raw_stream \
 query = parsed_stream.writeStream \
     .outputMode("append") \
     .format("console") \
-    .option("checkpointLocation", "/BigData/chkpt") \
+    .option("checkpointLocation", "/BigData/mchkpt") \
     .trigger(processingTime='3 seconds') \
     .start()
