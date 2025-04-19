@@ -33,8 +33,8 @@ parsed_stream = raw_stream \
     .select(from_json("json_data", json_schema).alias("data"), "timestamp") \
     .select("data.*", "timestamp") \
 
-source_counts = parsed_stream.withWatermark("timestamp", "10 seconds") \
-    .groupBy(window("timestamp", "10 seconds"), "source") \
+source_counts = parsed_stream.withWatermark("timestamp", "1 second") \
+    .groupBy(window("timestamp", "1 second"), "source") \
     .count()
 
 source_counts = source_counts.select("window.start", "window.end", "source", "count")
