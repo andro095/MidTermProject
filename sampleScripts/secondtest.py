@@ -55,3 +55,5 @@ stream = iot_key_val.writeStream \
     .outputMode("append") \
     .option("truncate", "false") \
     .start()
+
+stream.awaitTermination()
