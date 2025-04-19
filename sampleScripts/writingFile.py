@@ -45,7 +45,7 @@ parsed_df = kafka_df \
 query = parsed_df.writeStream \
     .outputMode("append") \
     .format("json") \
-    .option("path", "file:///home/duty095/kafka_output") \
+    .option("path", "hdfs:///BigData/kafka_output") \
     .option("checkpointLocation", "file:///home/duty095/chkpt") \
     .trigger(processingTime='10 seconds') \
     .start()
