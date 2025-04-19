@@ -53,6 +53,7 @@ stream = iot_key_val.writeStream \
     .format("console") \
     .outputMode("append") \
     .option("truncate", "false") \
+    .option("checkpointLocation", "/BigData/chkpt") \
     .start()
 
 stream.awaitTermination()
