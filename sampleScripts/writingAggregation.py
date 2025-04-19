@@ -35,3 +35,5 @@ query = parsed_stream.writeStream \
     .option("checkpointLocation", "/BigData/mchkpt") \
     .trigger(processingTime='3 seconds') \
     .start()
+
+query.awaitTermination()
