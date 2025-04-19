@@ -1,5 +1,5 @@
 from pyspark.sql import SparkSession
-from user_client import MySQLDataLoader
+from aditional_pipeline import MySQLDataLoader
 from db_config import DBConfig
 from dotenv import load_dotenv
 import os
