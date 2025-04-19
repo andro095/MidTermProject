@@ -43,7 +43,7 @@ query = source_counts.writeStream \
     .outputMode("append") \
     .option("checkpointLocation", os.getenv('CHKPT_DIR')) \
     .format("console") \
-    .trigger(availableNow=True) \
+    .trigger(continuous='1 second') \
     .start()
 
 query.awaitTermination()
