@@ -51,7 +51,6 @@ iot_key_val = (
 
 stream = iot_key_val.writeStream \
     .format("console") \
-    .option("checkpointLocation", "file:////home/duty095/chkpt") \
     .outputMode("append") \
     .option("truncate", "false") \
     .start()
