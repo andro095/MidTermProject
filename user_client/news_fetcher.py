@@ -1,0 +1,66 @@
+from mnews_manager import NewsManager
+
+MENU = [
+'Fetch News',
+'Change language',
+'Change sources',
+'Change date from',
+'Change date to',
+'Exit'
+]
+
+class NewsFetcher:
+
+	def __init__(self, news_manager : NewsManager):
+		self.news_manager = news_manager
+	
+	def change_language(self):
+		language = input('Enter the language: ')
+		self.news_manager.change_language(language)
+		print('Language changed to: ', language)
+	
+	def change_sources(self):
+		sources = input('Enter the sources (separated by coma): ')
+		self.news_manager.change_sources(sources)
+		print('Sources changed to: ', sources)
+	
+	def change_date_from(self):
+		date_from = input('Enter the date from (YYYY-MM-DD): ')
+		self.news_manager.change_date_from(date_from)
+		print('Date from changed to: ', date_from)
+	
+	def change_date_to(self):
+		date_to = input('Enter the date to (YYYY-MM-DD): ')
+		self.news_manager.change_date_to(date_to)
+		print('Date to changed to: ', date_to)
+	
+	def fetch_news(self):
+		keywords = input('Enter the keywords: ')
+		news = []
+	
+		for i in range(1, 6):
+			news.extend(self.news_manager.get_news(keywords, page=i)['articles'])
+			print(f"Found {len(news)} articles")
+			print(f"Sample articles: {news[:3 if len(news) > 3 else len(news)]}")
+		
+	def run(self):
+		while True:
+			print('Menu:')
+			for i, option in enumerate(MENU):
+				print(f'\t{i+1}. {option}')
+			choice = int(input('Enter your choice: '))
+		
+			if choice == 1:
+				self.fetch_news()
+			elif choice == 2:
+				self.change_language()
+			elif choice == 3:
+				self.change_sources()
+			elif choice == 4:
+				self.change_date_from()
+			elif choice == 5:
+				self.change_date_to()
+			elif choice == 6:
+				break
+			else:
+				print('Invalid choice')

@@ -1,0 +1,27 @@
+from pyspark.sql import SparkSession
+from user_client import MySQLDataLoader
+from db_config import DBConfig
+from dotenv import load_dotenv
+import os
+
+if __name__ == '__main__':
+    load_dotenv()
+    
+    spark = SparkSession \
+        .builder \
+        .appName("Spark to MySQL Data Loading") \
+        .getOrCreate()
+
+    db_config = DBConfig(
+        format= "jdbc",
+        jdbc_url = f"jdbc:mysql://{os.getenv('GCP_HOST')}:3306/articles_db",
+        table_name = "articles",
+        user = "training",
+        password = "training",
+        driver="com.mysql.cj.jdbc.Driver"
+    )
+    hdfs_path = "/BigData/kafka_output"
+
+    data_loader = MySQLDataLoader(spark,db_config,hdfs_path)
+
+    data_loader.run()
