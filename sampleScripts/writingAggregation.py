@@ -21,7 +21,7 @@ json_schema = (StructType()
 raw_stream = spark.readStream \
     .format("kafka") \
     .option("kafka.bootstrap.servers", "localhost:9092") \
-    .option("subscribe", "test-s-6") \
+    .option("subscribe", "test-s-7") \
     .option("startingOffsets", "earliest") \
     .load()
 
