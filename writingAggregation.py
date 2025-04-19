@@ -42,7 +42,6 @@ source_counts = source_counts.select("window.start", "window.end", "source", "co
 query = source_counts.writeStream \
     .outputMode("append") \
     .option("checkpointLocation", os.getenv('CHKPT_DIR')) \
-    .trigger(processingTime='5 seconds') \
     .format("console") \
     .start()
 
