@@ -1,8 +1,9 @@
-from pyspark.sql import SparkSession
-from pyspark.sql.types import StructType, StructField, StringType
-from pyspark.sql.functions import from_json, col, from_unixtime, window
-from dotenv import load_dotenv
 import os
+
+from dotenv import load_dotenv
+from pyspark.sql import SparkSession
+from pyspark.sql.functions import from_json, window
+from pyspark.sql.types import StructType
 
 load_dotenv()
 

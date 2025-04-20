@@ -11,7 +11,7 @@ spark = SparkSession.builder \
     .appName(os.getenv('SPARK_APP_NAME')) \
     .getOrCreate()
 
-json_schema = (StructType()
+news_schema = (StructType()
                 .add("keywords", "string")
                 .add("title", "string")
                 .add("source", "string")
@@ -21,25 +21,25 @@ json_schema = (StructType()
                 .add("content", "string")
                )
 
-raw_stream = spark.readStream \
+raw_df = spark.readStream \
     .format("kafka") \
     .option("kafka.bootstrap.servers", f"{os.getenv('GCP_LOCAL_HOST')}:{os.getenv('GCP_KAFKA_PORT')}") \
     .option("subscribe", os.getenv('GCP_KAFKA_TOPIC')) \
     .option("startingOffsets", "earliest") \
     .load()
 
-parsed_stream = raw_stream \
+parsed_df = raw_df \
     .selectExpr("CAST(value AS STRING) as json_data", "timestamp") \
-    .select(from_json("json_data", json_schema).alias("data"), "timestamp") \
+    .select(from_json("json_data", news_schema).alias("data"), "timestamp") \
     .select("data.*", "timestamp") \
 
-source_counts = parsed_stream.withWatermark("timestamp", "1 second") \
-    .groupBy(window("timestamp", "30 seconds"), "source") \
+sources = parsed_df.withWatermark("timestamp", "2 seconds") \
+    .groupBy(window("timestamp", "25 seconds"), "source") \
     .count()
 
-source_counts = source_counts.select("window.start", "window.end", "source", "count")
+sources = sources.select("window.start", "window.end", "source", "count")
 
-query = source_counts.writeStream \
+query = sources.writeStream \
     .outputMode("update") \
     .option("checkpointLocation", os.getenv('CHKPT_DIR')) \
     .format("console") \
