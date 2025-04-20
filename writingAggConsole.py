@@ -40,7 +40,7 @@ source_counts = parsed_stream.withWatermark("timestamp", "1 second") \
 source_counts = source_counts.select("window.start", "window.end", "source", "count")
 
 query = source_counts.writeStream \
-    .outputMode("append") \
+    .outputMode("update") \
     .option("checkpointLocation", os.getenv('CHKPT_DIR')) \
     .format("console") \
     .start()
